@@ -11,17 +11,27 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.*/
 
+
+/* ------  Variaveis globais  ---------- */
+float Pi = 3.1415926535;
+int X = 0, Y = 0, teta = 0;
+int CE = 340;  //Resolucao do encoder
+int RD = 3.3;  //right wheel
+int RE = 3.3;  //Left wheel
+int B = 20;  //Distancia entre rodas
+long int LE,LD;
+/* ------------- Variaveis para primeiro encoder   */
 const byte Encoder_C1_1 = 2;
 const byte Encoder_C2_1 = 4;
 byte Encoder_C1_1Last_ESQ;
-int duracao_ESQ;
+long int duracao_ESQ;
 boolean Direcao_ESQ;
 
-
+/* ------------- Variaveis para segundo encoder   */
 const byte Encoder_C1_2 = 3;
 const byte Encoder_C2_2 = 8;
 byte Encoder_C1_1Last_DIR;
-int duracao_DIR;
+long int duracao_DIR;
 boolean Direcao_DIR;
 
 
@@ -29,9 +39,9 @@ const int AIA = 9;  // (pwm) pino 9 conectado ao pino A-IA do Módulo
 const int AIB = 5;  // (pwm) pino 5 conectado ao pino A-IB do Módulo
 const int BIA = 10; // (pwm) pino 10 conectado ao pino B-IA do Módulo
 const int BIB = 6;  // (pwm) pino 6 conectado ao pino B-IB do Módulo
- 
+
 byte speed = 255;  // Mude este valor (0-255) para controlar a velocidade dos motores
- 
+
 void setup() {
   Serial.begin(57600);
   pinMode(AIA, OUTPUT); // Colocando os pinos como saída
@@ -41,17 +51,30 @@ void setup() {
 
   EncoderInit();
 }
- 
-void loop() {//O programa ficará em loop, girando um motor para um lado, depois para o outro e depois troca de motor e repete
-  backward();
-  Serial.print("Pulso Direito: ");
-  Serial.println(duracao_DIR);
-  Serial.print("Pulso Esquerdo: ");
-  Serial.println(duracao_ESQ);
-  delay(1000);
-  
+
+void odometria(int ND, int NE) {
+  X = X + (RD * ND + RE * NE) * (Pi / CE) * cos(teta);
+  Y = Y + (RD * ND + RE * NE) * (Pi / CE) * sin(teta);
+  teta = teta + (RD * ND - RE * NE) * (2 * Pi / CE) / B;
+  Serial.println(X);
 }
+
+void loop() {//O programa ficará em loop, girando um motor para um lado, depois para o outro e depois troca de motor e repete
+  
+  forward();
+  LD = duracao_DIR;
+  LE = duracao_ESQ;
+  odometria(LD,LE);
  
+//  Serial.print("Pulso Direito: ");
+//  Serial.println(duracao_DIR);
+//  Serial.print("Pulso Esquerdo: ");
+//  Serial.println(duracao_ESQ);
+  
+  delay(100);
+}
+
+
 void backward()
 {
   analogWrite(AIA, 0);
@@ -59,15 +82,15 @@ void backward()
   analogWrite(BIA, 0);
   analogWrite(BIB, speed);
 }
- 
+
 void forward()
 {
   analogWrite(AIA, speed);
   analogWrite(AIB, 0);
-  analogWrite(BIA, speed);
-  analogWrite(BIB, 0);
+  analogWrite(BIA, 0);
+  analogWrite(BIB, speed);
 }
- 
+
 void left()
 {
   analogWrite(AIA, speed);
@@ -75,7 +98,7 @@ void left()
   analogWrite(BIA, 0);
   analogWrite(BIB, speed);
 }
- 
+
 void right()
 {
   analogWrite(AIA, 0);
@@ -84,6 +107,13 @@ void right()
   analogWrite(BIB, 0);
 }
 
+void Stop()
+{
+  analogWrite(AIA, 0);
+  analogWrite(AIB, 0);
+  analogWrite(BIA, 0);
+  analogWrite(BIB, 0);
+}
 
 void EncoderInit()
 {
