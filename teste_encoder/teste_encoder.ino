@@ -11,15 +11,16 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.*/
 
+#include <Wire.h>
 
 /* ------  Variaveis globais  ---------- */
 float Pi = 3.1415926535;
 int X = 0, Y = 0, teta = 0;
-int CE = 340;  //Resolucao do encoder
+int CE = 830;  //Resolucao do encoder
 int RD = 3.3;  //right wheel
 int RE = 3.3;  //Left wheel
 int B = 20;  //Distancia entre rodas
-long int LE,LD;
+long int LE, LD;
 /* ------------- Variaveis para primeiro encoder   */
 const byte Encoder_C1_1 = 2;
 const byte Encoder_C2_1 = 4;
@@ -48,8 +49,29 @@ void setup() {
   pinMode(AIB, OUTPUT);
   pinMode(BIA, OUTPUT);
   pinMode(BIB, OUTPUT);
-
   EncoderInit();
+  Wire.begin(0x18);
+  Wire.onReceive(receiveEvent);
+}
+
+void receiveEvent(int howMany) {
+  while (Wire.available()) { // loop through all but the last
+    int number = Wire.read(); // Read fist value
+    if (number == 0)
+      number = Wire.read();
+
+    if (number == 5)
+      Stop();
+    else if (number == 8)
+      forward();
+    else if (number == 2)
+      backward();
+    else if (number == 4)
+      left();
+    else if (number == 6)
+      right();
+
+  }
 }
 
 void odometria(int ND, int NE) {
@@ -60,17 +82,6 @@ void odometria(int ND, int NE) {
 }
 
 void loop() {//O programa ficará em loop, girando um motor para um lado, depois para o outro e depois troca de motor e repete
-  
-  forward();
-  LD = duracao_DIR;
-  LE = duracao_ESQ;
-  odometria(LD,LE);
- 
-//  Serial.print("Pulso Direito: ");
-//  Serial.println(duracao_DIR);
-//  Serial.print("Pulso Esquerdo: ");
-//  Serial.println(duracao_ESQ);
-  
   delay(100);
 }
 
@@ -162,6 +173,6 @@ void calculapulso_DIR()
   }
   Encoder_C1_1Last_DIR = Lstate;
 
-  if (!Direcao_DIR)  duracao_DIR++;
-  else  duracao_DIR--;
+  if (!Direcao_DIR)  duracao_DIR--;
+  else  duracao_DIR++;
 }
