@@ -1,15 +1,15 @@
 /*<Program to test the motors and encoder to project Alice>
-    Copyright (C) <2020>  <William Ribeiro>
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.*/
+  Copyright (C) <2020>  <William Ribeiro>
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <https://www.gnu.org/licenses/>.*/
 
 #include <Wire.h>
 
@@ -41,7 +41,7 @@ const int AIB = 5;  // (pwm) pino 5 conectado ao pino A-IB do Módulo
 const int BIA = 10; // (pwm) pino 10 conectado ao pino B-IA do Módulo
 const int BIB = 6;  // (pwm) pino 6 conectado ao pino B-IB do Módulo
 
-byte speed = 255;  // Mude este valor (0-255) para controlar a velocidade dos motores
+byte speed = 153;  // Mude este valor (0-255) para controlar a velocidade dos motores
 
 void setup() {
   Serial.begin(57600);
@@ -54,31 +54,48 @@ void setup() {
   Wire.onReceive(receiveEvent);
 }
 
-void receiveEvent(int howMany) {
-  while (Wire.available()) { // loop through all but the last
-    int number = Wire.read(); // Read fist value
-    if (number == 0)
-      number = Wire.read();
-
-    if (number == 5)
-      Stop();
-    else if (number == 8)
-      forward();
-    else if (number == 2)
-      backward();
-    else if (number == 4)
-      left();
-    else if (number == 6)
-      right();
-
-  }
-}
 
 void odometria(int ND, int NE) {
   X = X + (RD * ND + RE * NE) * (Pi / CE) * cos(teta);
   Y = Y + (RD * ND + RE * NE) * (Pi / CE) * sin(teta);
   teta = teta + (RD * ND - RE * NE) * (2 * Pi / CE) / B;
   Serial.println(X);
+}
+
+void mov(int we, int wd) {
+  Serial.println(we);
+  Serial.println(wd);
+  if (we < 0 and wd < 0) {
+    analogWrite(AIA, abs(we));
+    analogWrite(AIB, 0);
+    analogWrite(BIA, 0);
+    analogWrite(BIB, abs(wd));
+  }
+
+  else if (we >= 0 and wd >= 0) {
+    analogWrite(AIA, 0);
+    analogWrite(AIB, we);
+    analogWrite(BIA, wd);
+    analogWrite(BIB, 0);
+  }
+}
+
+void receiveEvent(int howMany) {
+  while (Wire.available()) { // loop through all but the last
+    int number1 = Wire.read(); // Read fist value
+    if (number1 == 0)
+      number1 = Wire.read();
+    int number2 = Wire.read();
+    int sinal = Wire.read();
+    //sentido de giro
+    if (sinal == 1) {
+      number1 = number1 * -1;
+      number2 = number2 * -1;
+    }
+    
+    mov(number1, number2);
+
+  }
 }
 
 void loop() {//O programa ficará em loop, girando um motor para um lado, depois para o outro e depois troca de motor e repete
@@ -94,37 +111,7 @@ void backward()
   analogWrite(BIB, speed);
 }
 
-void forward()
-{
-  analogWrite(AIA, speed);
-  analogWrite(AIB, 0);
-  analogWrite(BIA, 0);
-  analogWrite(BIB, speed);
-}
 
-void left()
-{
-  analogWrite(AIA, speed);
-  analogWrite(AIB, 0);
-  analogWrite(BIA, 0);
-  analogWrite(BIB, speed);
-}
-
-void right()
-{
-  analogWrite(AIA, 0);
-  analogWrite(AIB, speed);
-  analogWrite(BIA, speed);
-  analogWrite(BIB, 0);
-}
-
-void Stop()
-{
-  analogWrite(AIA, 0);
-  analogWrite(AIB, 0);
-  analogWrite(BIA, 0);
-  analogWrite(BIB, 0);
-}
 
 void EncoderInit()
 {
