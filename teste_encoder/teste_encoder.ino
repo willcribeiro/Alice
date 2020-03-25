@@ -52,6 +52,7 @@ void setup() {
   EncoderInit();
   Wire.begin(0x18);
   Wire.onReceive(receiveEvent);
+  Wire.onRequest(requestEvent);
 }
 
 
@@ -63,8 +64,6 @@ void odometria(int ND, int NE) {
 }
 
 void mov(int we, int wd) {
-  Serial.println(we);
-  Serial.println(wd);
   if (we < 0 and wd < 0) {
     analogWrite(AIA, abs(we));
     analogWrite(AIB, 0);
@@ -92,11 +91,17 @@ void receiveEvent(int howMany) {
       number1 = number1 * -1;
       number2 = number2 * -1;
     }
-    
     mov(number1, number2);
-
   }
 }
+
+void requestEvent() {
+  float data[2];
+  data[0] = duracao_DIR;
+  data[1] = duracao_ESQ;
+  Wire.write((byte*) &data, 3 * sizeof(float));
+}
+
 
 void loop() {//O programa ficará em loop, girando um motor para um lado, depois para o outro e depois troca de motor e repete
   delay(100);
