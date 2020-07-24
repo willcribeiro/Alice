@@ -15,15 +15,11 @@ def get_float(data, index):
 
 def Controle_Remoto(func):
     if vel == 'w':
-        x = [1,velo_PWM,1,velo_PWM]
+        x = [velo_PWM,velo_PWM,1]
     elif vel == 's':
-        x = [2,velo_PWM,2,velo_PWM]
+        x = [velo_PWM,velo_PWM,2]
     elif vel == 0:
         x = [1,0,1,0]
-    elif vel == 'd':
-        x = [1,velo_PWM,2,velo_PWM]
-    elif vel == 'a':
-        x = [2,velo_PWM,1,velo_PWM]
     bus.write_i2c_block_data(addr,0 ,x)
 
 while numb ==1:    

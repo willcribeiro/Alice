@@ -17,15 +17,6 @@ def Controle_Remoto(func):
     if vel == 8:
         x = [1,230,1,230]
     elif vel == 2:
-
-def get_float(data, index):
-    bytes = data[4*index:(index+1)*4]
-    return struct.unpack('f', "".join(map(chr, bytes)))[0]
-
-def Controle_Remoto(func):
-    if vel == 8:
-        x = [1,230,1,230]
-    elif vel == 2:
         x = [2,170,2,170]
     elif vel == 5:
         x = [1,0,1,0]
@@ -47,16 +38,6 @@ while numb ==1:
         vel = input(">>>>    ")
         Controle_Remoto(vel)
         sleep(0.5)     
-
-
-    elif ent ==2:
-        print("Entre com os valores")
-        n1 = input("Sentido >>>>   ")
-        n2 = input("Velocidade >>>>   ")
-        n3 = input("Sentido >>>>   ")	
-       Controle_Remoto(vel)
-        sleep(0.5)     
-
 
     elif ent ==2:
         print("Entre com os valores")
