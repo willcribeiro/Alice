@@ -10,26 +10,22 @@
   GNU General Public License for more details.
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <https://www.gnu.org/licenses/>.*/
-  
+int inter = 0;
 void receiveEvent(int howMany) {
   while (Wire.available()) { // loop through all but the last
     int number1 = Wire.read(); // Read fist value
     if (number1 == 0)
       number1 = Wire.read();
     int number2 = Wire.read();
-    int sinal = Wire.read();
-    //sentido de giro
-    if (sinal == 1) {
-      number1 = number1 * -1;
-      number2 = number2 * -1;
-    }
-    mov(number1, number2);
+    int number3 = Wire.read();
+    int number4 = Wire.read();
+    mov(number1,number2,number3,number4);
   }
 }
 
 void requestEvent() {
-  float data[2];
-  data[0] = duracao_DIR;
-  data[1] = duracao_ESQ;
-  Wire.write((byte*) &data, 3 * sizeof(float));
+  float data[3];
+  data[0] = 1;
+  data[1] = 2;
+  Wire.write((byte*) &data, 2 * sizeof(float));
 }

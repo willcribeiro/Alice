@@ -36,35 +36,60 @@ long int duracao_DIR;
 boolean Direcao_DIR;
 
 
-const int AIA = 9;  // (pwm) pino 9 conectado ao pino A-IA do Módulo
-const int AIB = 5;  // (pwm) pino 5 conectado ao pino A-IB do Módulo
-const int BIA = 10; // (pwm) pino 10 conectado ao pino B-IA do Módulo
-const int BIB = 6;  // (pwm) pino 6 conectado ao pino B-IB do Módulo
+#define pinEnableMotorA  5
+#define pinEnableMotorB 6
+
+#define pinSentido1MotorA 7
+#define pinSentido2MotorA 9
+
+#define pinSentido1MotorB 10
+#define pinSentido2MotorB 11
+
+
 /* ----------------- Comeco do codigo ----------------------------- */
 void setup() {
   Serial.begin(57600);
-  pinMode(AIA, OUTPUT); // Colocando os pinos como saída
-  pinMode(AIB, OUTPUT);
-  pinMode(BIA, OUTPUT);
-  pinMode(BIB, OUTPUT);
+  pinMode(pinEnableMotorA, OUTPUT); // Colocando os pinos como saída
+  pinMode(pinEnableMotorB, OUTPUT);
+
+  pinMode(pinSentido1MotorA, OUTPUT);
+  pinMode(pinSentido2MotorA, OUTPUT);
+  pinMode(pinSentido1MotorB, OUTPUT);
+  pinMode(pinSentido2MotorB, OUTPUT);
+
   EncoderInit();
   Wire.begin(0x18);
   Wire.onReceive(receiveEvent);
   Wire.onRequest(requestEvent);
 }
+
+
+
+
 /*----- Funcao para movimentacao das rodas,  com base na vel angular que foi fornecida ------------------*/
-void mov(int we, int wd) {
-  if (we < 0 and wd < 0) { //Sentido Positivo de giro
-    analogWrite(AIA, abs(we));
-    analogWrite(AIB, 0);
-    analogWrite(BIA, 0);
-    analogWrite(BIB, abs(wd));
-  }
-  else if (we >= 0 and wd >= 0) { //Sentido Negativo de Giro
-    analogWrite(AIA, 0);
-    analogWrite(AIB, we);
-    analogWrite(BIA, wd);
-    analogWrite(BIB, 0);
+void mov(int SinE, int we, int SinD, int wd) {
+  if (SinE != -1) {
+
+    analogWrite(pinEnableMotorA, wd);
+    analogWrite(pinEnableMotorB, we);
+    if (SinE == 2) {
+      digitalWrite(pinSentido1MotorA, HIGH);
+      digitalWrite(pinSentido2MotorA, LOW);
+    }
+    else if (SinE == 1) {
+      digitalWrite(pinSentido1MotorA, LOW);
+      digitalWrite(pinSentido2MotorA, HIGH);
+    }
+
+    if (SinD == 2) {
+      digitalWrite(pinSentido1MotorB, HIGH);
+      digitalWrite(pinSentido2MotorB, LOW);
+    }
+    else if (SinD == 1) {
+      digitalWrite(pinSentido1MotorB, LOW);
+      digitalWrite(pinSentido2MotorB, HIGH);
+    }
+
   }
 }
 
