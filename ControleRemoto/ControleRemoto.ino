@@ -63,12 +63,9 @@ void setup() {
   Wire.onRequest(requestEvent);
 }
 
-
-
-
 /*----- Funcao para movimentacao das rodas,  com base na vel angular que foi fornecida ------------------*/
 void mov(int SinE, int we, int SinD, int wd) {
-  if (SinE != -1) {
+    if (SinE != -1) {
 
     analogWrite(pinEnableMotorA, wd);
     analogWrite(pinEnableMotorB, we);
@@ -76,7 +73,7 @@ void mov(int SinE, int we, int SinD, int wd) {
       digitalWrite(pinSentido1MotorA, HIGH);
       digitalWrite(pinSentido2MotorA, LOW);
     }
-    else if (SinE == 1) {
+    if (SinE == 1) {
       digitalWrite(pinSentido1MotorA, LOW);
       digitalWrite(pinSentido2MotorA, HIGH);
     }
@@ -85,7 +82,7 @@ void mov(int SinE, int we, int SinD, int wd) {
       digitalWrite(pinSentido1MotorB, HIGH);
       digitalWrite(pinSentido2MotorB, LOW);
     }
-    else if (SinD == 1) {
+    if (SinD == 1) {
       digitalWrite(pinSentido1MotorB, LOW);
       digitalWrite(pinSentido2MotorB, HIGH);
     }
