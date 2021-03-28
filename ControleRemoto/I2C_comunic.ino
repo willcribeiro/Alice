@@ -10,19 +10,16 @@
   GNU General Public License for more details.
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <https://www.gnu.org/licenses/>.*/
-
-int number1 =0,number2 =0,number3 =0,number4 =0;
 int inter = 0;
-void receiveEvent(int howMany) { //Pq não posso por um delay ???
+void receiveEvent(int howMany) {
   while (Wire.available()) { // loop through all but the last
-    number1 = Wire.read(); // Read fist value
-    if (number1 == 0){
+    int number1 = Wire.read(); // Read fist value
+    if (number1 == 0)
       number1 = Wire.read();
-    }
-    number2 = Wire.read();
-    number3 = Wire.read();
-    number4 = Wire.read();
-    mov(number1,number2,number3,number4); 
+    int number2 = Wire.read();
+    int number3 = Wire.read();
+    int number4 = Wire.read();
+    mov(number1,number2,number3,number4);
   }
 }
 

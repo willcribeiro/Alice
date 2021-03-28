@@ -66,6 +66,19 @@ void mov(int we, int wd) {
     analogWrite(BIA, wd);
     analogWrite(BIB, 0);
   }
+  
+  else if (we > 0 and wd < 0) { //Giro em sentido horário
+    analogWrite(AIA, we);
+    analogWrite(AIB, 0);
+    analogWrite(BIA, wd);
+    analogWrite(BIB, 0);
+  }
+   else if (we < 0 and wd > 0) { //Giro em sentido anti-horário
+    analogWrite(AIA, 0);
+    analogWrite(AIB, we);
+    analogWrite(BIA, 0);
+    analogWrite(BIB, wd);
+  }
 }
 
 void loop() {//O programa ficará em loop, girando um motor para um lado, depois para o outro e depois troca de motor e repete
