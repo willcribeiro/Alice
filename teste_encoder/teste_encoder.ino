@@ -16,7 +16,7 @@
 /* ------  Variaveis globais  ---------- */
 float Pi = 3.1415926535;
 int X = 0, Y = 0, teta = 0;
-int CE = 830;  //Resolucao do encoder
+int CE = 24;  //Resolucao do encoder
 int RD = 3.3;  //right wheel
 int RE = 3.3;  //Left wheel
 int B = 20;  //Distancia entre rodas
@@ -104,6 +104,13 @@ void requestEvent() {
 
 
 void loop() {//O programa ficará em loop, girando um motor para um lado, depois para o outro e depois troca de motor e repete
+  //Serial.print("Pulso Esquerdo: ");
+  //Serial.println(duracao_ESQ);
+  //Serial.print("Pulso Direito: ");
+  //Serial.println(duracao_DIR);
+  odometria(duracao_DIR,duracao_ESQ);
+  duracao_DIR = 0;
+  duracao_ESQ = 0;
   delay(100);
 }
 
